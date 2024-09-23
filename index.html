@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movimento no Canvas</title>
+    <style>
+        canvas {
+            border: 1px solid black;
+            background-color: #f0f0f0;
+        }
+        .controls {
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Movimento no Canvas</h1>
+    <canvas id="myCanvas" width="500" height="500"></canvas>
+    <div class="controls">
+        <button id="up">Cima</button>
+        <button id="down">Baixo</button>
+        <button id="left">Esquerda</button>
+        <button id="right">Direita</button>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('myCanvas');
+        const ctx = canvas.getContext('2d');
+
+        let component = {
+            x: 250,
+            y: 250,
+            size: 20,
+            color: 'blue',
+            draw: function() {
+                ctx.fillStyle = this.color;
+                ctx.fillRect(this.x, this.y, this.size, this.size);
+            },
+            clear: function() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+            }
+        };
+
+        let speed = 5;
+        let direction = { x: 0, y: 0 };
+
+        function update() {
+            component.x += direction.x * speed;
+            component.y += direction.y * speed;
+
+            // Limitar o movimento dentro do canvas
+            if (component.x < 0) component.x = 0;
+            if (component.x + component.size > canvas.width) component.x = canvas.width - component.size;
+            if (component.y < 0) component.y = 0;
+            if (component.y + component.size > canvas.height) component.y = canvas.height - component.size;
+
+            component.clear();
+            component.draw();
+        }
+
+        let movementInterval;
+
+        function startMovement() {
+            if (!movementInterval) {
+                movementInterval = setInterval(update, 100);
+            }
+        }
+
+        function stopMovement() {
+            clearInterval(movementInterval);
+            movementInterval = null;
+            direction.x = 0;
+            direction.y = 0;
+        }
+
+        // Configura os botões para iniciar o movimento
+        document.getElementById('up').addEventListener('mousedown', () => {
+            direction.y = -1;
+            startMovement();
+        });
+        document.getElementById('up').addEventListener('mouseup', stopMovement);
+        document.getElementById('up').addEventListener('mouseleave', stopMovement);
+
+        document.getElementById('down').addEventListener('mousedown', () => {
+            direction.y = 1;
+            startMovement();
+        });
+        document.getElementById('down').addEventListener('mouseup', stopMovement);
+        document.getElementById('down').addEventListener('mouseleave', stopMovement);
+
+        document.getElementById('left').addEventListener('mousedown', () => {
+            direction.x = -1;
+            startMovement();
+        });
+        document.getElementById('left').addEventListener('mouseup', stopMovement);
+        document.getElementById('left').addEventListener('mouseleave', stopMovement);
+
+        document.getElementById('right').addEventListener('mousedown', () => {
+            direction.x = 1;
+            startMovement();
+        });
+        document.getElementById('right').addEventListener('mouseup', stopMovement);
+        document.getElementById('right').addEventListener('mouseleave', stopMovement);
+
+        // Desenha o componente inicialmente
+        component.draw();
+    </script>
+</body>
+</html>
